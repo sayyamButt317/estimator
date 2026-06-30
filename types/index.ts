@@ -9,6 +9,8 @@ export type Priority = "low" | "medium" | "high" | "critical";
 
 export type Complexity = "low" | "medium" | "high" | "very_high";
 
+export type Probability = "low" | "medium" | "high";
+
 export type ConfidenceLevel = "low" | "medium" | "high";
 
 export type RequirementCategory =
@@ -132,7 +134,7 @@ export interface Risk {
   title: string;
   description: string;
   severity: Priority;
-  probability: Complexity;
+  probability: Probability;
   mitigation: string;
 }
 

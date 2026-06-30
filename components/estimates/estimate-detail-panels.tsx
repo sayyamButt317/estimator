@@ -1,6 +1,6 @@
 "use client";
 
-import type { Estimate } from "@/types";
+import type { Activity, ActivityType, Estimate } from "@/types";
 import {
   aiSuggestions,
   risks,
@@ -21,10 +21,14 @@ import {
   TrendingUp,
   Users,
   Calendar,
-  Activity,
-  MessageSquare,
   FileText,
   Shield,
+  Plus,
+  Download,
+  Share2,
+  MessageSquare,
+  Pencil,
+  ClipboardList,
 } from "lucide-react";
 import {
   HoursDistributionChart,
@@ -187,53 +191,89 @@ export function EstimateRightSidebar({ estimate }: EstimateRightSidebarProps) {
   );
 }
 
-export function EstimateOverviewTab({ estimate }: { estimate: Estimate }) {
+export function EstimateOverviewTab({ estimate: _estimate }: { estimate: Estimate }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <HoursDistributionChart />
         <CostBreakdownChart />
       </div>
-
-      {/* Activity Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            Recent Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {activities.slice(0, 5).map((activity, i) => (
-              <div key={activity.id} className="flex gap-3">
-                <div className="relative">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="text-[10px]">
-                      {activity.user.avatar}
-                    </AvatarFallback>
-                  </Avatar>
-                  {i < activities.length - 1 && (
-                    <div className="absolute top-8 left-1/2 w-px h-6 -translate-x-1/2 bg-border" />
-                  )}
-                </div>
-                <div className="flex-1 pb-4">
-                  <p className="text-sm">
-                    <span className="font-medium">{activity.user.name}</span>{" "}
-                    <span className="text-muted-foreground">
-                      {activity.description}
-                    </span>
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {formatRelativeTime(activity.timestamp)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
+  );
+}
+
+const activityTypeConfig: Record<
+  ActivityType,
+  { label: string; icon: typeof Plus; iconClass: string; badgeVariant: "default" | "success" | "info" | "warning" | "secondary" }
+> = {
+  created: { label: "Created", icon: Plus, iconClass: "text-emerald-600 bg-emerald-50", badgeVariant: "success" },
+  updated: { label: "Updated", icon: Pencil, iconClass: "text-blue-600 bg-blue-50", badgeVariant: "info" },
+  downloaded: { label: "Downloaded", icon: Download, iconClass: "text-violet-600 bg-violet-50", badgeVariant: "secondary" },
+  shared: { label: "Shared", icon: Share2, iconClass: "text-cyan-600 bg-cyan-50", badgeVariant: "info" },
+  comment: { label: "Comment", icon: MessageSquare, iconClass: "text-amber-600 bg-amber-50", badgeVariant: "warning" },
+  ai_generated: { label: "AI Generated", icon: Sparkles, iconClass: "text-primary bg-primary/10", badgeVariant: "default" },
+  requirement_updated: { label: "Requirement", icon: ClipboardList, iconClass: "text-orange-600 bg-orange-50", badgeVariant: "warning" },
+};
+
+function ActivityTimelineItem({
+  activity,
+  isLast,
+}: {
+  activity: Activity;
+  isLast: boolean;
+}) {
+  const config = activityTypeConfig[activity.type];
+  const Icon = config.icon;
+
+  return (
+    <div className="flex gap-4">
+      <div className="relative flex flex-col items-center">
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${config.iconClass}`}
+        >
+          <Icon className="h-4 w-4" />
+        </div>
+        {!isLast && <div className="w-px flex-1 min-h-[24px] bg-border mt-2" />}
+      </div>
+      <div className={`flex-1 min-w-0 ${isLast ? "" : "pb-6"}`}>
+        <div className="flex flex-wrap items-center gap-2 mb-1">
+          <Badge variant={config.badgeVariant} className="text-[10px]">
+            {config.label}
+          </Badge>
+          <span className="text-xs text-muted-foreground">
+            {formatRelativeTime(activity.timestamp)}
+          </span>
+        </div>
+        <p className="text-sm">
+          <span className="font-medium">{activity.user.name}</span>{" "}
+          <span className="text-muted-foreground">{activity.description}</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function EstimateActivityTab() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm font-semibold">Activity Timeline</CardTitle>
+        <p className="text-xs text-muted-foreground mt-1">
+          Full history of changes, shares, downloads, and comments on this estimate
+        </p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-0">
+          {activities.map((activity, i) => (
+            <ActivityTimelineItem
+              key={activity.id}
+              activity={activity}
+              isLast={i === activities.length - 1}
+            />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

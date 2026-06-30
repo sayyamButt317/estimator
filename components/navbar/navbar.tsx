@@ -6,8 +6,6 @@ import {
   Search,
   Bell,
   Sparkles,
-  Plus,
-  ChevronDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -23,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { NewEstimateMenu } from "@/components/estimates/new-estimate-menu";
 
 export function Navbar() {
   const { collapsed } = useSidebar();
@@ -63,42 +62,24 @@ export function Navbar() {
           </span>
         </Button>
 
-        <Button variant="outline" size="sm" className="hidden sm:flex gap-2">
+        <Button variant="outline" size="sm" className="hidden sm:flex gap-2 rounded-full border-border">
           <Sparkles className="h-4 w-4 text-primary" />
           AI Assistant
         </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" className="gap-1.5">
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">New Estimate</span>
-              <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem>From Scratch</DropdownMenuItem>
-            <DropdownMenuItem>From Template</DropdownMenuItem>
-            <DropdownMenuItem>
-              <Sparkles className="h-4 w-4 mr-2 text-primary" />
-              AI Generate
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Import CSV</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NewEstimateMenu />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="ml-1 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <Avatar className="h-8 w-8 cursor-pointer">
-                <AvatarFallback className="text-xs">
+                <AvatarFallback className="text-xs bg-primary/10 text-primary">
                   {currentUser.avatar}
                 </AvatarFallback>
               </Avatar>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuContent align="end" className="w-48 rounded-xl">
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/dashboard/settings">Settings</Link>

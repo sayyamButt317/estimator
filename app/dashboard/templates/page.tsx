@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Code,
@@ -13,11 +14,14 @@ import {
   DollarSign,
   Sparkles,
 } from "lucide-react";
+import type { Template } from "@/types";
 import { templates } from "@/data/mock-data";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CreateTemplateDialog } from "@/components/templates/create-template-dialog";
+import { UseTemplateDialog } from "@/components/templates/use-template-dialog";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   Code,
@@ -32,13 +36,22 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; style?: 
 };
 
 export default function TemplatesPage() {
+  const [createOpen, setCreateOpen] = useState(false);
+  const [useOpen, setUseOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+
+  const handleUseTemplate = (template: Template) => {
+    setSelectedTemplate(template);
+    setUseOpen(true);
+  };
+
   return (
     <>
       <PageHeader
         title="Templates"
         description="Start faster with pre-built estimation templates"
       >
-        <Button size="sm">
+        <Button size="sm" onClick={() => setCreateOpen(true)}>
           <Sparkles className="h-4 w-4 mr-1.5" />
           Create Template
         </Button>
@@ -85,7 +98,12 @@ export default function TemplatesPage() {
                       <span className="font-semibold">{template.estimatedHours}h</span>
                       <span className="text-muted-foreground"> · {template.tasks} tasks</span>
                     </div>
-                    <Button variant="outline" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleUseTemplate(template)}
+                    >
                       Use Template
                     </Button>
                   </div>
@@ -95,6 +113,13 @@ export default function TemplatesPage() {
           );
         })}
       </div>
+
+      <CreateTemplateDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <UseTemplateDialog
+        open={useOpen}
+        onOpenChange={setUseOpen}
+        template={selectedTemplate}
+      />
     </>
   );
 }

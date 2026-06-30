@@ -31,6 +31,7 @@ import { RequirementsTab } from "@/components/estimates/requirements-tab";
 import {
   EstimateRightSidebar,
   EstimateOverviewTab,
+  EstimateActivityTab,
   EstimateTimelineTab,
   EstimateNotesTab,
   EstimateAttachmentsTab,
@@ -203,7 +204,7 @@ export default function EstimateDetailPage({ params }: EstimateDetailPageProps) 
               <EstimateAttachmentsTab />
             </TabsContent>
             <TabsContent value="activity">
-              <EstimateOverviewTab estimate={estimate} />
+              <EstimateActivityTab />
             </TabsContent>
             <TabsContent value="notes">
               <EstimateNotesTab />
